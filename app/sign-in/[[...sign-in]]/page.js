@@ -31,7 +31,7 @@ export default function SignUpPage() {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <List>
-        <ListItem button component={Link} href="/">
+        <ListItem Button component={Link} href="/">
           <ListItemText primary="Home" />
         </ListItem>
       </List>

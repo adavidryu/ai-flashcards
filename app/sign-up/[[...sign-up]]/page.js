@@ -1,39 +1,122 @@
-import { AppBar, Container, Toolbar, Typography, Button, Box } from '@mui/material'
+'use client'
+
+import { useUser } from "@clerk/nextjs"
+import { useState } from "react"
+import { AppBar, Toolbar, Button, Typography, Box, IconButton, useMediaQuery, Drawer, List, ListItem, ListItemText } from "@mui/material"
+import { styled, useTheme } from '@mui/material/styles'
 import Link from 'next/link'
-import { SignUp } from '@clerk/nextjs'
+import { SignedIn, SignedOut, UserButton, SignUp } from "@clerk/nextjs"
+import MenuIcon from '@mui/icons-material/Menu'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 
-export default function SignUpPage(){
-    return (<Container maxWidth="100vw" disableGutters>
-        <AppBar position="static" sx = {{backGroundColor: "#3f51b5"}}>
-            <Toolbar>
-                <Typography 
-                    variant="h6"
-                    sx={{
-                        flexGrow: 1,
-                    }}>
-                        flashycard.ai
-                    </Typography>
-                    <Button color = "inherit">
-                        <Link href="/sign-in" passHref>
-                            Login
-                        </Link>
-                    </Button>
-                    <Button color = "inherit">
-                        <Link href="/sign-up" passHref>
-                            Sign Up
-                        </Link>
-                    </Button>
-            </Toolbar>
-        </AppBar>
+const LogoLockIcon = styled(LockOutlinedIcon)(({ theme }) => ({
+  margin: theme.spacing(1),
+  backgroundColor: theme.palette.secondary.main,
+  color: theme.palette.common.white,
+  borderRadius: '50%',
+  padding: theme.spacing(2),
+  fontSize: '2rem',
+}))
 
-        <Box
-            display = "flex"
-            flexDirection = "column"
-            alignItems = "center"
-            justifyContent = "center"
-        >
-            <Typography variant="h4">Sign Up</Typography>
-            <SignUp />
+export default function SignUpPage() {
+  const { isLoaded, isSignedIn, user } = useUser()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+      <List>
+        <ListItem Button component={Link} href="/">
+          <ListItemText primary="Home" />
+        </ListItem>
+      </List>
+    </Box>
+  )
+
+  return (
+    <Box sx={{
+      minHeight: '100vh',
+      backgroundImage: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <AppBar position="static" color="transparent" elevation={0}>
+        <Toolbar>
+          <Typography variant='h6' component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
+            flashycard.ai
+          </Typography>
+          {isMobile ? (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} href="/">Home</Button>
+              <UserButton />
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      <Drawer
+        variant="temporary"
+        anchor="right"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true,
+        }}
+      >
+        {drawer}
+      </Drawer>
+
+      <Box sx={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: theme.spacing(2),
+      }}>
+        <Box sx={{
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: theme.shape.borderRadius * 2,
+          boxShadow: theme.shadows[5],
+          padding: theme.spacing(4),
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          maxWidth: '400px',
+          width: '100%',
+          margin: '0 auto', // Center the box horizontally
+          transition: 'transform 0.3s ease-in-out', // Add smooth transition for hover effect
+          '&:hover': {
+            transform: 'translateY(-5px)', // Lift the box slightly on hover
+          },
+        }}>
+          <LockOutlinedIcon />
+          <Box sx={{ mt: 2, width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <SignUp routing="path" path="/sign-up" />
+          </Box>
         </Box>
-    </Container>)
+      </Box>
+
+      <Box sx={{ py: 4, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          © {new Date().getFullYear()} flashycard.ai. All rights reserved.
+        </Typography>
+      </Box>
+    </Box>
+  )
 }
