@@ -13,15 +13,28 @@ import MenuIcon from '@mui/icons-material/Menu'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: theme.shadows[4],
-  },
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(10px)',
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: theme.shadows[4],
+    },
 }))
+  
+const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    padding: '0 30px',
+}))
+  
 
 export default function Generate() {
     const {isLoaded, isSignedIn, user} = useUser()
@@ -134,10 +147,13 @@ export default function Generate() {
     }
 
     return(
-        <Container maxWidth="100vw" disableGutters>
-            <AppBar position="static">
+        <Box sx={{
+          minHeight: '100vh',
+          backgroundImage: 'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+        }}>
+            <AppBar position="static" color="transparent" elevation={0}>
                 <Toolbar>
-                    <Typography variant='h6' component="div" sx={{ flexGrow: 1 }}>
+                    <Typography variant='h6' component="div" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
                         flashycard.ai
                     </Typography>
                     {isMobile ? (
@@ -172,7 +188,6 @@ export default function Generate() {
             </Drawer>
 
             <Box sx={{
-                backgroundImage: 'linear-gradient(120deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05)), linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
                 py: 6,
                 mb: 4,
                 color: 'white',
@@ -195,17 +210,31 @@ export default function Generate() {
                 <Box sx={{
                     mt:4, mb:6, display:"flex", flexDirection: 'column', alignItems: 'center'
                 }}>
-                    <Paper sx={{p:4, width:"100%"}}>
-                        <TextField value={text} onChange={(e) => setText(e.target.value)} label="Enter Text" fullWidth multiline rows={4} variant="outlined" sx={{mb:2}} />
-                        <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
-                            Submit
-                        </Button>
+                    <Paper sx={{
+                        p:4, 
+                        width:"100%", 
+                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                        backdropFilter: 'blur(10px)',
+                    }}>
+                        <TextField 
+                            value={text} 
+                            onChange={(e) => setText(e.target.value)} 
+                            label="Enter Text" 
+                            fullWidth 
+                            multiline 
+                            rows={4} 
+                            variant="outlined" 
+                            sx={{mb:2}}
+                        />
+                        <GradientButton onClick={handleSubmit} fullWidth>
+                            Generate Flashcards
+                        </GradientButton>
                     </Paper>
                 </Box>
 
                 {flashcards.length > 0 && (
                     <Box sx={{mt:4}}>
-                        <Typography variant='h5' gutterBottom>Flashcards Preview</Typography>
+                        <Typography variant='h4' gutterBottom color="white">Flashcards Preview</Typography>
                         <Grid container spacing={3}>
                             {flashcards.map((flashcard, index) => (
                                 <Grid item xs={12} sm={6} md={4} key={index} >
@@ -260,9 +289,9 @@ export default function Generate() {
                             ))}
                         </Grid>
                         <Box sx={{mt:4, display:'flex', justifyContent:'center'}}>
-                            <Button variant="contained" color="secondary" onClick={handleOpen}>
+                            <GradientButton onClick={handleOpen}>
                                 Save Collection
-                            </Button>
+                            </GradientButton>
                         </Box>
                     </Box>
                 )}
@@ -286,10 +315,16 @@ export default function Generate() {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={saveFlashcards} color="primary" variant="contained">Save</Button>
+                        <GradientButton onClick={saveFlashcards}>Save</GradientButton>
                     </DialogActions>
                 </Dialog>
             </Container>
-        </Container>
+
+            <Box sx={{ py: 4, textAlign: 'center', bgcolor: 'background.paper', mt: 8 }}>
+                <Typography variant="body2" color="text.secondary">
+                    © {new Date().getFullYear()} flashycard.ai. All rights reserved.
+                </Typography>
+            </Box>
+        </Box>
     )
 }
